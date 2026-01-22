@@ -82,7 +82,6 @@ public class Pin : MonoBehaviour
     {
         Vector3 targetScale = transform.localScale;
         transform.localScale = Vector3.zero;
-        transform.DOScale(targetScale, 0.3f)
-            .SetEase(Ease.OutBack);
+        transform.DOScale(targetScale, 0.3f).SetEase(Ease.OutBack);
     }
 }

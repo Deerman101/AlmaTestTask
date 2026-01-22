@@ -6,11 +6,11 @@ using System.IO;
 using System.Collections;
 using SFB;
 
-public class UIManager : MonoBehaviour //God class... переделать...
+public class UIManager : MonoBehaviour //God class... для MVP сойдёт...
 {
     public static UIManager Instance;
 
-    public bool IsAnyPanelOpen => previewPanel.gameObject.activeSelf || detailsPanel.gameObject.activeSelf || editPanel.gameObject.activeSelf;
+    public bool IsAnyPanelOpen => previewPanel.gameObject.activeSelf || detailsPanel.gameObject.activeSelf || editPanel.gameObject.activeSelf || _exitConfirmPanel.gameObject.activeSelf /*|| _mainMenuPanel.gameObject.activeSelf*/;
     public bool IsMainMenuActive => _mainMenuPanel.gameObject.activeSelf;
 
     [Header("Main Menu")]
@@ -66,7 +66,10 @@ public class UIManager : MonoBehaviour //God class... переделать...
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (_exitConfirmPanel.gameObject.activeSelf)
+            {
+                CancelExit();
                 return;
+            }
 
             ShowExitConfirm();
         }
@@ -163,15 +166,12 @@ public class UIManager : MonoBehaviour //God class... переделать...
         _mainMenuPanel.interactable = false;
         _mainMenuPanel.blocksRaycasts = false;
 
-        _mainMenuPanel
-            .DOFade(0, _mainMenuFadeTime)
-            .SetEase(Ease.InOutQuad)
-            .OnComplete(() =>
-            {
-                _mainMenuPanel.gameObject.SetActive(false);
+        _mainMenuPanel.DOFade(0, _mainMenuFadeTime).SetEase(Ease.InOutQuad).OnComplete(() =>
+        {
+            _mainMenuPanel.gameObject.SetActive(false);
 
-                LoadPins();
-            });
+            LoadPins();
+        });
     }
 
     private void LoadPins()
@@ -248,10 +248,7 @@ public class UIManager : MonoBehaviour //God class... переделать...
             return;
         }
 
-        panel.DOFade(0, 0.2f).OnComplete(() =>
-        {
-            panel.gameObject.SetActive(false);
-        });
+        panel.DOFade(0, 0.2f).OnComplete(() => panel.gameObject.SetActive(false));
     }
 
     void PositionPanelNearPin(RectTransform panel, Transform pin)
@@ -264,13 +261,8 @@ public class UIManager : MonoBehaviour //God class... переделать...
         bool openLeft = screenPos.x > Screen.width * 0.6f;
         bool openDown = screenPos.y > Screen.height * 0.7f;
 
-        float x = openLeft
-            ? screenPos.x - panelWidth - _offset
-            : screenPos.x + _offset;
-
-        float y = openDown
-            ? screenPos.y - _offset
-            : screenPos.y + panelHeight + _offset;
+        float x = openLeft ? screenPos.x - panelWidth - _offset : screenPos.x + _offset;
+        float y = openDown ? screenPos.y - _offset : screenPos.y + panelHeight + _offset;
 
         panel.position = new Vector2(x, y);
     }
@@ -285,8 +277,6 @@ public class UIManager : MonoBehaviour //God class... переделать...
             rawImage.texture = tex;
         }
         else
-        {
             rawImage.texture = null;
-        }
     }
 }

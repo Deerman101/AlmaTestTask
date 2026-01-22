@@ -17,10 +17,7 @@ public static class SaveSystem
     {
         string json = JsonUtility.ToJson(new Wrapper { pins = pins }, true);
 
-        await Task.Run(() =>
-        {
-            File.WriteAllText(_filePath, json, Encoding.UTF8);
-        });
+        await Task.Run(() => File.WriteAllText(_filePath, json, Encoding.UTF8));
     }
 
     public static async Task<List<PinData>> LoadAsync()
